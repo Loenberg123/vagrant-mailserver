@@ -1,0 +1,49 @@
+---
+- name: install mailgraph
+  apt: name={{ item }} 
+       state=present
+  with_items:
+       - rrdtool
+       - mailgraph
+- name: install python pip
+  apt: name=python-pip state=present
+
+- name: install passlib
+  pip: name=passlib
+
+- name: move configuration file mailgraph
+  template:
+     src=mailgraph/mailgraph.j2
+     dest=/etc/default/mailgraph
+
+- name: create mailgraph directory in webserver directory
+  file:
+     path=/var/www/html/mailgraph
+     owner=www-data
+     group=www-data
+     mode=0755
+     state=directory
+
+- name: copy mailgraph.cgi to web directory
+  copy:
+     remote_src=yes
+     src=/usr/lib/cgi-bin/mailgraph.cgi
+     dest=/var/www/html/mailgraph/
+     owner=root
+     group=root
+     mode=751
+
+- name: move .htaccess file to directory
+  template:
+     src=mailgraph/htaccess.j2
+     dest=/var/www/html/mailgraph/.htaccess
+     owner=www-data
+     group=www-data
+     
+- name: create htpasswd file with user
+  htpasswd:
+     path=/var/www/html/mailgraph/.htpasswd
+     name=admin
+     password={{ mailgraph_admin_pass }}
+     owner=www-data
+     group=www-data

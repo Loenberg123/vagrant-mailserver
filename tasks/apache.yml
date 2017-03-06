@@ -1,0 +1,53 @@
+---
+- name: install apache
+  apt: name=apache2 state=present
+
+- name: install apache utils
+  apt: name=apache2-utils state=present
+
+- name: Sitio virtual sin ssl
+  template:
+      src=sites-available/roundcube.conf.j2
+      dest=/etc/apache2/sites-available/roundcube.conf
+
+- name: Sitio virtual ssl
+  template:
+      src=sites-available/roundcube-ssl.conf.j2
+      dest=/etc/apache2/sites-available/roundcube-ssl.conf
+
+- name: Mover certificado
+  copy:
+     src=certs/apache-roundcube.pem
+     dest=/etc/ssl/certs/apache-roundcube.pem
+
+- name: Mover llave
+  copy:
+     src=private/apache-roundcube.pem
+     dest=/etc/ssl/private/apache-roundcube.pem
+
+- name: Habilitar modulo ssl
+  apache2_module: state=present name=ssl
+
+- name: Habilitar modulo cgi
+  apache2_module: state=present name=cgid
+
+
+- name: Desactivar sitio virtual por defecto
+  file:
+     path=/etc/apache2/sites-enabled/000-default.conf
+     state=absent
+
+- name: Activar sitio virtual roundcube
+  file:
+     src=/etc/apache2/sites-available/roundcube.conf
+     dest=/etc/apache2/sites-enabled/roundcube.conf
+     state=link
+
+- name: Activar sitio virtual roundcube-ssl
+  file:
+     src=/etc/apache2/sites-available/roundcube-ssl.conf
+     dest=/etc/apache2/sites-enabled/roundcube-ssl.conf
+     state=link
+
+  notify:
+      - reiniciando apache

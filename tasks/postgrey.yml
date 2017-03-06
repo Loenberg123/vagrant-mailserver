@@ -1,0 +1,11 @@
+---
+- name: install postgrey
+  apt: name=postgrey state=present
+
+- name: moving config file postgrey
+  template:
+     src=postgrey/postgrey.j2
+     dest=/etc/default/postgrey
+
+  notify:
+     reiniciando postgrey

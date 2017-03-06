@@ -1,0 +1,11 @@
+# mysql_virtual_domains_maps.cf
+user = usermail
+password = mailpassword
+hosts = 127.0.0.1
+dbname = servermail
+query          = SELECT domain FROM domain WHERE domain='%s' AND active = '1'
+#query          = SELECT domain FROM domain WHERE domain='%s'
+#optional query to use when relaying for backup MX
+#query           = SELECT domain FROM domain WHERE domain='%s' AND backupmx = '0' AND active = '1'
+#expansion_limit = 100
+

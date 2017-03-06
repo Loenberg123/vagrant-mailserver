@@ -1,0 +1,24 @@
+---
+- name: move roundcube installer
+  unarchive:
+     remote_src=yes
+     src=https://github.com/roundcube/roundcubemail/releases/download/1.2.3/roundcubemail-1.2.3-complete.tar.gz
+     dest=/var/www/html/
+     owner=www-data
+     group=www-data
+     mode=0755
+
+- name: create roundcube db
+  mysql_db:
+     name=roundcube
+     login_user=root
+     login_password=
+     state=present
+
+- name: create db user for roundcube db
+  mysql_user:
+     name=cubeuser
+     password=cubepass
+     host=localhost
+     priv=roundcube.*:ALL,GRANT
+     state=present

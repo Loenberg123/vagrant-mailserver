@@ -1,0 +1,40 @@
+---
+- hosts: all
+  sudo: true
+  vars:
+     domain_name: example.com
+     mailgraph_admin_pass: 1234asdf
+     postfixadmin_pass: 1234asdf
+  tasks:
+        - include: tasks/apache.yml
+        - include: tasks/mysql.yml
+        - include: tasks/php.yml
+        - include: tasks/postfix.yml
+        - include: tasks/dovecot.yml
+        - include: tasks/roundcube.yml
+        - include: tasks/postfixadmin.yml
+        - include: tasks/mailgraph.yml
+        - include: tasks/spamassassin.yml
+        - include: tasks/postgrey.yml
+        - include: tasks/amavis-clam.yml
+
+
+  handlers:
+        - name: reiniciando mysql
+          service: name=mysql state=restarted
+        - name: reiniciando apache
+          service: name=apache2 state=restarted
+        - name: reiniciando postfix
+          service: name=postfix state=restarted
+        - name: reiniciando dovecot
+          service: name=dovecot state=restarted
+        - name: reiniciando spamassassin
+          service: name=spamassassin state=restarted
+        - name: reiniciando postgrey
+          service: name=postgrey state=restarted
+        - name: reiniciando amavis
+          service: name=amavis state=restarted
+        - name: reiniciando clamav
+          service: name=clamav-daemon state=restarted
+
+...

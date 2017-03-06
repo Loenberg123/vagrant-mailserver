@@ -1,0 +1,27 @@
+---
+- name: install amavis and clamav
+  apt: name={{ item }} 
+       state=present
+  with_items:
+       - amavisd-new
+       - clamav-daemon
+
+- name: move amavis config
+  template:
+       src=amavis-clam/amavis/conf.d/15-content_filter_mode.j2 
+       dest=/etc/amavis/conf.d/15-content_filter_mode
+
+- name: move amavis config 2
+  template:
+       src=amavis-clam/amavis/conf.d/20-debian_defaults.j2
+       dest=/etc/amavis/conf.d/20-debian_defaults
+
+- name: add user clamav to group amavis
+  user:
+      name: clamav
+      groups: amavis
+
+  notify:
+     reiniciando amavis
+  notify:
+     reiniciando clamav

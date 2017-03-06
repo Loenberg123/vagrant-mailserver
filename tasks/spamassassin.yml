@@ -1,0 +1,25 @@
+---
+- name: install spamassassin
+  apt: name={{ item }}
+       state=present
+  with_items:
+       - spamassassin
+       - spamc
+- name: adding spamd user
+  user:
+     name=spamd
+     home=/home/spamd
+     state=present
+
+- name: moving config file local.cf
+  template:
+     src=spamassassin/local.cf.j2
+     dest=/etc/spamassassin/local.cf
+
+- name: moving config gile spamassassin
+  template:
+     src=spamassassin/spamassassin.j2
+     dest=/etc/default/spamassassin
+
+  notify:
+     reiniciando spamassassin

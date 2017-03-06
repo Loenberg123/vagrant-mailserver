@@ -1,0 +1,70 @@
+---
+- name: install dovecot
+  apt: name=dovecot-core state=present
+
+- name: install dovecot-mysql
+  apt: name=dovecot-mysql state=present
+
+- name: install dovecot-lmtpd
+  apt: name=dovecot-lmtpd state=present
+
+- name: install dovecot-imapd
+  apt: name=dovecot-imapd state=present
+
+- name: create vmail group
+  group:
+     name=vmail
+     gid=5000
+     state=present
+
+- name: create vmail user
+  user:
+     name=vmail
+     uid=5000
+     group=vmail
+     home=/var/mail
+     state=present
+
+- name: set permissions on /var/mail
+  file:
+     path=/var/mail
+     owner=vmail
+     group=vmail
+
+- name: moving configuration file dovecot.conf
+  template:
+     src=dovecot/dovecot.conf.j2
+     dest=/etc/dovecot/dovecot.conf
+
+- name: moving configuration file dovecot-sql.conf.ext
+  template:
+     src=dovecot/dovecot-sql.conf.ext.j2
+     dest=/etc/dovecot/dovecot-sql.conf.ext
+
+- name: moving configuration file 10-auth.conf
+  template:
+     src=dovecot/conf.d/10-auth.conf.j2
+     dest=/etc/dovecot/conf.d/10-auth.conf
+
+- name: moving configuration file 10-mail.conf
+  template:
+     src=dovecot/conf.d/10-mail.conf.j2
+     dest=/etc/dovecot/conf.d/10-mail.conf
+
+- name: moving configuration file 10-master.conf
+  template:
+     src=dovecot/conf.d/10-master.conf.j2
+     dest=/etc/dovecot/conf.d/10-master.conf
+
+- name: moving configuration file 10-ssl.conf
+  template:
+     src=dovecot/conf.d/10-ssl.conf.j2
+     dest=/etc/dovecot/conf.d/10-ssl.conf
+
+- name: moving configuration file auth-sql.conf.ext
+  template:
+     src=dovecot/conf.d/auth-sql.conf.ext.j2
+     dest=/etc/dovecot/conf.d/auth-sql.conf.ext
+
+  notify:
+     reiniciando dovecot

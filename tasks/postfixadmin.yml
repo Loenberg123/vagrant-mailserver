@@ -1,0 +1,21 @@
+---
+- name: move postfixAdmin installer
+  unarchive:
+     remote_src=yes
+     src=https://netix.dl.sourceforge.net/project/postfixadmin/postfixadmin/postfixadmin-3.0.2/postfixadmin-3.0.2.tar.gz
+     dest=/var/www/html/
+     owner=www-data
+     group=www-data
+     validate_certs=false
+     mode=0755
+
+- name: move config.local.php to postfixadmin dir
+  template:
+     src=config.local.php.j2
+     dest=/var/www/html/postfixadmin-3.0.2/config.local.php
+     owner=www-data
+     group=www-data
+     mode=0755
+
+- name: create admin user for postfixAdmin
+  shell: bash /var/www/html/postfixadmin-3.0.2/scripts/postfixadmin-cli admin add admin@{{ domain_name }} --password {{ postfixadmin_pass }} --password2 {{ postfixadmin_pass }} --superadmin 1 --active 1
